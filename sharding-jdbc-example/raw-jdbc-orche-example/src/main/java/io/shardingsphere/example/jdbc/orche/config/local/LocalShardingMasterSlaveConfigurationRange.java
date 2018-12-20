@@ -18,6 +18,8 @@
 package io.shardingsphere.example.jdbc.orche.config.local;
 
 import com.google.common.collect.Lists;
+
+import io.shardingsphere.api.config.SagaConfiguration;
 import io.shardingsphere.api.config.rule.MasterSlaveRuleConfiguration;
 import io.shardingsphere.api.config.rule.ShardingRuleConfiguration;
 import io.shardingsphere.api.config.rule.TableRuleConfiguration;
@@ -60,7 +62,7 @@ public final class LocalShardingMasterSlaveConfigurationRange implements Example
                 new StandardShardingStrategyConfiguration("order_id", new PreciseModuloShardingTableAlgorithm(), new RangeModuloShardingTableAlgorithm()));
         shardingRuleConfig.setMasterSlaveRuleConfigs(getMasterSlaveRuleConfigurations());
         OrchestrationConfiguration orchestrationConfig = new OrchestrationConfiguration("orchestration-sharding-master-slave-data-source", registryCenterConfig, true);
-        return OrchestrationShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new HashMap<String, Object>(), new Properties(), orchestrationConfig);
+        return OrchestrationShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new HashMap<String, Object>(), new Properties(), orchestrationConfig, new SagaConfiguration());
     }
     
     private TableRuleConfiguration getOrderTableRuleConfiguration() {

@@ -38,15 +38,15 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
     
     private final JDBCOrderItemTransactionRepositotyImpl orderItemRepository;
     
+    private final DataSource dataSource;
+    
     private Connection insertConnection;
     
     public RawPojoTransactionService(final JDBCOrderTransacationRepositoryImpl orderRepository,
         final JDBCOrderItemTransactionRepositotyImpl orderItemRepository, final DataSource dataSource) throws SQLException {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
-        this.insertConnection = dataSource.getConnection();
-        orderRepository.setInsertConnection(insertConnection);
-        orderItemRepository.setInsertConnection(insertConnection);
+        this.dataSource = dataSource;
     }
     
     @Override
@@ -73,7 +73,6 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
     @Override
     public void printTransactionType() {
         System.out.println(String.format("-------------- Process With Transaction %s ---------------", TransactionTypeHolder.get()));
-    
     }
     
     @Override
@@ -97,7 +96,10 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
     }
     
     private void executeFailure() {
-        try {
+        try (Connection connection = dataSource.getConnection()){
+            this.insertConnection = connection;
+            orderRepository.setInsertConnection(insertConnection);
+            orderItemRepository.setInsertConnection(insertConnection);
             beginTransaction();
             super.processFailure();
             commitTransaction();
@@ -105,6 +107,8 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
             System.out.println(ex.getMessage());
             rollbackTransaction();
             super.printData(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     

@@ -17,6 +17,7 @@
 
 package io.shardingsphere.example.jdbc.nodep.config;
 
+import io.shardingsphere.api.config.SagaConfiguration;
 import io.shardingsphere.api.config.rule.ShardingRuleConfiguration;
 import io.shardingsphere.api.config.rule.TableRuleConfiguration;
 import io.shardingsphere.api.config.strategy.StandardShardingStrategyConfiguration;
@@ -42,7 +43,7 @@ public final class ShardingTablesConfigurationRange implements ExampleConfigurat
         shardingRuleConfig.getBindingTableGroups().add("t_order, t_order_item");
         shardingRuleConfig.setDefaultTableShardingStrategyConfig(
                 new StandardShardingStrategyConfiguration("order_id", new PreciseModuloShardingTableAlgorithm(), new RangeModuloShardingTableAlgorithm()));
-        return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new HashMap<String, Object>(), new Properties());
+        return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new HashMap<String, Object>(), new Properties(), new SagaConfiguration());
     }
     
     private static TableRuleConfiguration getOrderTableRuleConfiguration() {
