@@ -77,11 +77,11 @@ public class YamlConfigurationTransactionExample {
     private static void process(final DataSource dataSource) throws SQLException {
         TransactionService transactionService = getTransactionService(dataSource);
         transactionService.initEnvironment();
-//        transactionService.processSuccess(false);
-//        processFailureSingleTransaction(transactionService, TransactionType.LOCAL);
-//        processFailureSingleTransaction(transactionService, TransactionType.XA);
+        transactionService.processSuccess(false);
+        processFailureSingleTransaction(transactionService, TransactionType.LOCAL);
+        processFailureSingleTransaction(transactionService, TransactionType.XA);
         processFailureSingleTransaction(transactionService, TransactionType.BASE);
-//        processFailureSingleTransaction(transactionService, TransactionType.LOCAL);
+        processFailureSingleTransaction(transactionService, TransactionType.LOCAL);
         transactionService.cleanEnvironment();
     }
     
