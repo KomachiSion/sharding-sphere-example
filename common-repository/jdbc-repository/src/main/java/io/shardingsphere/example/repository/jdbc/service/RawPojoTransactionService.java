@@ -53,26 +53,55 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
     public void processFailureWithLocal() {
         TransactionTypeHolder.set(TransactionType.LOCAL);
         printTransactionType();
-        executeFailure();
+        processFailure();
     }
     
     @Override
     public void processFailureWithXa() {
         TransactionTypeHolder.set(TransactionType.XA);
         printTransactionType();
-        executeFailure();
+        processFailure();
     }
     
     @Override
     public void processFailureWithBase() {
         TransactionTypeHolder.set(TransactionType.BASE);
         printTransactionType();
-        executeFailure();
+        processFailure();
     }
     
     @Override
     public void printTransactionType() {
         System.out.println(String.format("-------------- Process With Transaction %s ---------------", TransactionTypeHolder.get()));
+    }
+    
+    @Override
+    public void processSuccess(boolean isRangeSharding) {
+        try (Connection connection = dataSource.getConnection()) {
+            orderRepository.setInsertConnection(connection);
+            orderItemRepository.setInsertConnection(connection);
+            super.processSuccess(isRangeSharding);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void processFailure() {
+        try (Connection connection = dataSource.getConnection()){
+            this.insertConnection = connection;
+            orderRepository.setInsertConnection(insertConnection);
+            orderItemRepository.setInsertConnection(insertConnection);
+            beginTransaction();
+            super.processFailure();
+            commitTransaction();
+        } catch (RuntimeException ex) {
+            System.out.println(ex.getMessage());
+            rollbackTransaction();
+            super.printData(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -95,26 +124,9 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
         return new OrderItem();
     }
     
-    private void executeFailure() {
-        try (Connection connection = dataSource.getConnection()){
-            this.insertConnection = connection;
-            orderRepository.setInsertConnection(insertConnection);
-            orderItemRepository.setInsertConnection(insertConnection);
-            beginTransaction();
-            super.processFailure();
-            commitTransaction();
-        } catch (RuntimeException ex) {
-            System.out.println(ex.getMessage());
-            rollbackTransaction();
-            super.printData(false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    
     private void beginTransaction() {
         try {
-            if (null != this.insertConnection && !this.insertConnection.isClosed()) {
+            if (null != this.insertConnection) {
                 this.insertConnection.setAutoCommit(false);
             }
         } catch (SQLException ignored) {
@@ -123,7 +135,7 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
     
     private void commitTransaction() {
         try {
-            if (null != this.insertConnection && !this.insertConnection.isClosed()) {
+            if (null != this.insertConnection) {
                 this.insertConnection.commit();
             }
         } catch (SQLException ignored) {
@@ -132,7 +144,7 @@ public final class RawPojoTransactionService extends CommonServiceImpl implement
     
     private void rollbackTransaction() {
         try {
-            if (null != this.insertConnection && !this.insertConnection.isClosed()) {
+            if (null != this.insertConnection) {
                 this.insertConnection.rollback();
             }
         } catch (SQLException ignored) {
