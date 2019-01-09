@@ -25,27 +25,51 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class ShardingProxyTransactionService extends CommonServiceImpl implements TransactionService {
     
     @Override
-    @Transactional
     @ShardingTransactionType
-    public void processFailureWithLocal() {
+    @Transactional
+    public void processFailureWithLocal(final int dataNumbers) {
         printTransactionType();
-        super.processFailure();
+        super.processFailure(dataNumbers);
     }
     
     @Override
+    @ShardingTransactionType
     @Transactional
+    public void processSuccessWithLocal(final int dataNumbers) {
+        printTransactionType();
+        super.processSuccess(false, dataNumbers);
+    }
+    
+    @Override
     @ShardingTransactionType(TransactionType.XA)
-    public void processFailureWithXa() {
+    @Transactional
+    public void processFailureWithXA(final int dataNumbers) {
         printTransactionType();
-        super.processFailure();
+        super.processFailure(dataNumbers);
     }
     
     @Override
+    @ShardingTransactionType(TransactionType.XA)
     @Transactional
-    @ShardingTransactionType(TransactionType.BASE)
-    public void processFailureWithBase() {
+    public void processSuccessWithXA(final int dataNumbers) {
         printTransactionType();
-        super.processFailure();
+        super.processSuccess(false, dataNumbers);
+    }
+    
+    @Override
+    @ShardingTransactionType(TransactionType.BASE)
+    @Transactional
+    public void processSuccessWithBase(final int dataNumbers) {
+        printTransactionType();
+        super.processSuccess(false, dataNumbers);
+    }
+    
+    @Override
+    @ShardingTransactionType(TransactionType.BASE)
+    @Transactional
+    public void processFailureWithBase(final int dataNumbers) {
+        printTransactionType();
+        super.processFailure(dataNumbers);
     }
     
     @Override

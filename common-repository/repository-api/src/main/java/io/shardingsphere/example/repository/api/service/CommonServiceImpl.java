@@ -42,30 +42,39 @@ public abstract class CommonServiceImpl implements CommonService {
         getOrderItemRepository().dropTable();
     }
     
+    @Override
+    public void processSuccessNonTx(final boolean isRangeSharding, final int dataNumbers) {
+        System.out.println("-------------- Process Success none tx Begin ---------------");
+        List<Long> orderIds = insertData(dataNumbers);
+        updateDate(orderIds);
+        System.out.println("-------------- Process Success none tx Finish --------------");
+    }
+    
     @Transactional
     @Override
-    public void processSuccess(final boolean isRangeSharding) {
+    public void processSuccess(final boolean isRangeSharding, final int dataNumbers) {
         System.out.println("-------------- Process Success Begin ---------------");
-        List<Long> orderIds = insertData();
-        printData(isRangeSharding);
-        deleteData(orderIds);
-        printData(isRangeSharding);
+        List<Long> orderIds = insertData(dataNumbers);
+        updateDate(orderIds);
+//        printData(isRangeSharding);
+//        deleteData(orderIds);
+//        printData(isRangeSharding);
         System.out.println("-------------- Process Success Finish --------------");
     }
     
     @Transactional
     @Override
-    public void processFailure() {
+    public void processFailure(final int dataNumbers) {
         System.out.println("-------------- Process Failure Begin ---------------");
-        insertData();
+        insertData(dataNumbers);
         System.out.println("-------------- Process Failure Finish --------------");
         throw new RuntimeException("Exception occur for transaction test.");
     }
     
-    private List<Long> insertData() {
-        System.out.println("---------------------------- Insert Data ----------------------------");
-        List<Long> result = new ArrayList<>(10);
-        for (int i = 1; i <= 10; i++) {
+    private List<Long> insertData(final int dataNumbers) {
+//        System.out.println("---------------------------- Insert Data ----------------------------");
+        List<Long> result = new ArrayList<>(dataNumbers);
+        for (int i = 1; i <= dataNumbers; i++) {
             Order order = newOrder();
             order.setUserId(i);
             order.setStatus("INSERT_TEST");
@@ -78,6 +87,19 @@ public abstract class CommonServiceImpl implements CommonService {
             result.add(order.getOrderId());
         }
         return result;
+    }
+    
+    private void updateDate(final List<Long> orderIds) {
+        for (Long each : orderIds) {
+            Order order = newOrder();
+            order.setOrderId(each);
+            order.setStatus("DONE");
+            getOrderRepository().update(order);
+            OrderItem orderItem = newOrderItem();
+            orderItem.setOrderId(each);
+            orderItem.setStatus("DONE");
+            getOrderItemRepository().update(orderItem);
+        }
     }
     
     private void deleteData(final List<Long> orderIds) {

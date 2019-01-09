@@ -27,25 +27,49 @@ public abstract class ShardingJDBCTransactionService extends CommonServiceImpl i
     @Override
     @ShardingTransactionType
     @Transactional
-    public void processFailureWithLocal() {
+    public void processFailureWithLocal(final int dataNumbers) {
         printTransactionType();
-        super.processFailure();
+        super.processFailure(dataNumbers);
+    }
+    
+    @Override
+    @ShardingTransactionType
+    @Transactional
+    public void processSuccessWithLocal(final int dataNumbers) {
+        printTransactionType();
+        super.processSuccess(false, dataNumbers);
     }
     
     @Override
     @ShardingTransactionType(TransactionType.XA)
     @Transactional
-    public void processFailureWithXa() {
+    public void processFailureWithXA(final int dataNumbers) {
         printTransactionType();
-        super.processFailure();
+        super.processFailure(dataNumbers);
+    }
+    
+    @Override
+    @ShardingTransactionType(TransactionType.XA)
+    @Transactional
+    public void processSuccessWithXA(final int dataNumbers) {
+        printTransactionType();
+        super.processSuccess(false, dataNumbers);
     }
     
     @Override
     @ShardingTransactionType(TransactionType.BASE)
     @Transactional
-    public void processFailureWithBase() {
+    public void processSuccessWithBase(final int dataNumbers) {
         printTransactionType();
-        super.processFailure();
+        super.processSuccess(false, dataNumbers);
+    }
+    
+    @Override
+    @ShardingTransactionType(TransactionType.BASE)
+    @Transactional
+    public void processFailureWithBase(final int dataNumbers) {
+        printTransactionType();
+        super.processFailure(dataNumbers);
     }
     
     @Override

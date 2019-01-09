@@ -19,11 +19,17 @@ package io.shardingsphere.example.repository.api.service;
 
 public interface TransactionService extends CommonService {
     
-    void processFailureWithLocal();
+    void processFailureWithLocal(int dataNumbers);
     
-    void processFailureWithXa();
+    void processSuccessWithLocal(int dataNumbers);
     
-    void processFailureWithBase();
+    void processFailureWithXA(int dataNumbers);
+    
+    void processSuccessWithXA(int dataNumbers);
+    
+    void processSuccessWithBase(int dataNumbers);
+    
+    void processFailureWithBase(int dataNumbers);
     
     void printTransactionType();
 }

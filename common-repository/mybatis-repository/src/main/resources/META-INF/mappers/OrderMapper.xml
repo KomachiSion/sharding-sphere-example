@@ -23,6 +23,10 @@
         INSERT INTO t_order (user_id, status) VALUES (#{userId,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR});
     </insert>
     
+    <update id="update">
+        UPDATE t_order SET status=#{status,jdbcType=VARCHAR} WHERE order_id=#{orderId,jdbcType=INTEGER};
+    </update>
+    
     <delete id="delete">
         DELETE FROM t_order WHERE order_id = #{orderId,jdbcType=INTEGER};
     </delete>

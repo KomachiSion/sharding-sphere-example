@@ -23,9 +23,11 @@ public interface CommonService {
     
     void cleanEnvironment();
     
-    void processSuccess(boolean isRangeSharding);
+    void processSuccessNonTx(boolean isRangeSharding, int dataNumbers);
     
-    void processFailure();
+    void processSuccess(boolean isRangeSharding, int dataNumbers);
+    
+    void processFailure(int dataNumbers);
     
     void printData(boolean isRangeSharding);
 }

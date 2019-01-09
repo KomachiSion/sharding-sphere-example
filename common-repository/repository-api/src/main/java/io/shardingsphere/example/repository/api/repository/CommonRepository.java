@@ -29,6 +29,8 @@ public interface CommonRepository<T> {
     
     Long insert(T entity);
     
+    int update(T entity);
+    
     void delete(Long id);
     
     List<T> selectAll();
