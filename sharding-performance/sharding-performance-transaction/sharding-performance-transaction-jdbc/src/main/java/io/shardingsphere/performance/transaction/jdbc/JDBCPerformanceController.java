@@ -91,7 +91,7 @@ public final class JDBCPerformanceController {
     public String baseRollback(@RequestParam(name = "number") Integer number) {
         try {
             springPojoTransactionService.processFailureWithBase(number);
-        } catch (final ShardingException ignore) {
+        } catch (final RuntimeException ignore) {
         }
         return "ok";
     }
