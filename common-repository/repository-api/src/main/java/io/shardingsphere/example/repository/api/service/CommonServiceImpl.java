@@ -66,9 +66,18 @@ public abstract class CommonServiceImpl implements CommonService {
     @Override
     public void processFailure(final int dataNumbers) {
         System.out.println("-------------- Process Failure Begin ---------------");
-        insertData(dataNumbers);
+        List<Long> orderIds = insertData(dataNumbers);
+        updateDate(orderIds);
+        insertErrorData();
         System.out.println("-------------- Process Failure Finish --------------");
-        throw new RuntimeException("Exception occur for transaction test.");
+//        throw new RuntimeException("Exception occur for transaction test.");
+    }
+    
+    private void insertErrorData() {
+        Order order = newOrder();
+        order.setStatus("Too Long Data!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        order.setUserId(11);
+        getOrderRepository().insert(order);
     }
     
     private List<Long> insertData(final int dataNumbers) {
