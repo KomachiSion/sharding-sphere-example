@@ -96,7 +96,7 @@
             </dependency>
             <dependency>
                 <groupId>io.shardingsphere</groupId>
-                <artifactId>sharding-transaction-saga</artifactId>
+                <artifactId>sharding-transaction-base-saga</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>

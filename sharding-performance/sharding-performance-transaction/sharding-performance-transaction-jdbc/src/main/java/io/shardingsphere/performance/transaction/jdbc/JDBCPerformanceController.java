@@ -17,8 +17,8 @@
 
 package io.shardingsphere.performance.transaction.jdbc;
 
-import io.shardingsphere.core.exception.ShardingException;
 import io.shardingsphere.example.repository.mybatis.service.SpringPojoTransactionService;
+import org.apache.shardingsphere.core.exception.ShardingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
