@@ -15,17 +15,16 @@
  * </p>
  */
 
-package io.shardingsphere.performance.transaction.jdbc;
+package io.shardingsphere.performance.transaction.jdbc.entity;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.Data;
 
-@MapperScan(basePackages = "io.shardingsphere.performance.transaction.jdbc.repository")
-@SpringBootApplication
-public class SpringBootPerformanceStarter {
+@Data
+public class Order {
     
-    public static void main(final String[] args) {
-        SpringApplication.run(SpringBootPerformanceStarter.class, args);
-    }
+    private long orderId;
+    
+    private long userId;
+    
+    private String status;
 }

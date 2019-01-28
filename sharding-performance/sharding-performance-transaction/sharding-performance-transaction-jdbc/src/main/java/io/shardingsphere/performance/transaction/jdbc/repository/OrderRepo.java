@@ -15,17 +15,28 @@
  * </p>
  */
 
-package io.shardingsphere.performance.transaction.jdbc;
+package io.shardingsphere.performance.transaction.jdbc.repository;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.List;
 
-@MapperScan(basePackages = "io.shardingsphere.performance.transaction.jdbc.repository")
-@SpringBootApplication
-public class SpringBootPerformanceStarter {
+import org.apache.ibatis.annotations.Mapper;
+
+import io.shardingsphere.performance.transaction.jdbc.entity.Order;
+
+@Mapper
+public interface OrderRepo {
     
-    public static void main(final String[] args) {
-        SpringApplication.run(SpringBootPerformanceStarter.class, args);
-    }
+    Integer createTableIfNotExists();
+    
+    Integer truncateTable();
+    
+    Integer dropTable();
+    
+    Integer insert(Order order);
+    
+    Integer update(Order order);
+    
+    Integer delete(Order order);
+    
+    List<Order> selectAll();
 }

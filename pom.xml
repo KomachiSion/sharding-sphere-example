@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     
     <modules>
-        <module>common-repository</module>
+        <!--<module>common-repository</module>-->
         <!--<module>example-utility</module>-->
         <!--<module>sharding-jdbc-example</module>-->
         <!--<module>sharding-proxy-example</module>-->
@@ -23,14 +23,16 @@
         <project.build.locale>zh_CN</project.build.locale>
         
         <sharding-sphere.version>4.0.0.M1-SNAPSHOT</sharding-sphere.version>
-    
+        <lombok.version>1.16.4</lombok.version>
+        
         <aspectjweaver.version>1.8.9</aspectjweaver.version>
         <spring-framework.version>4.3.20.RELEASE</spring-framework.version>
         <spring-boot.version>1.5.17.RELEASE</spring-boot.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <alibaba.druid.version>1.1.11</alibaba.druid.version>
         <mysql-connector-java.version>5.1.42</mysql-connector-java.version>
-        <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
+        <postgresql.version>9.4.1212</postgresql.version>
+        <h2.version>1.4.196</h2.version>
         <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.2.0</logback.version>
         
@@ -120,6 +122,13 @@
                 <version>${sharding-sphere.version}</version>
             </dependency>
     
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
@@ -218,6 +227,20 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
     

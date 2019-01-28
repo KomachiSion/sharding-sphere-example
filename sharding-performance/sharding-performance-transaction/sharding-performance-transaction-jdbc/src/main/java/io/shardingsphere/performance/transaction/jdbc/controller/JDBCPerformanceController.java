@@ -15,82 +15,80 @@
  * </p>
  */
 
-package io.shardingsphere.performance.transaction.jdbc;
+package io.shardingsphere.performance.transaction.jdbc.controller;
 
-import io.shardingsphere.example.repository.mybatis.service.SpringPojoTransactionService;
-import org.apache.shardingsphere.core.exception.ShardingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.shardingsphere.performance.transaction.jdbc.service.PerformanceService;
 
 @RestController
 @RequestMapping(value = "/jdbc")
 public final class JDBCPerformanceController {
     
     @Autowired
-    @Qualifier("jdbcTransactionService")
-    private SpringPojoTransactionService springPojoTransactionService;
+    private PerformanceService performanceService;
     
     @RequestMapping(value = "/init")
     public String init() {
-        springPojoTransactionService.initEnvironment();
+        performanceService.initEnvironment();
         return "ok";
     }
     
-    @RequestMapping(value = "/insert")
-    public String insert() {
-        springPojoTransactionService.processSuccess(false, 1);
+    @RequestMapping(value = "/init/data")
+    public String initData(@RequestParam(name = "row") Integer row) {
+        performanceService.initData(row);
         return "ok";
     }
     
     @RequestMapping(value = "/commit/auto")
     public String autoCommit(@RequestParam(name = "number") Integer number) {
-        springPojoTransactionService.processSuccessNonTx(false, number);
+        performanceService.processSuccessNonTx(number);
         return "ok";
     }
     
     @RequestMapping(value = "/commit/local")
     public String localCommit(@RequestParam(name = "number") Integer number) {
-        springPojoTransactionService.processSuccessWithLocal(number);
+        performanceService.processSuccessWithLocal(number);
         return "ok";
     }
     
     @RequestMapping(value = "/rollback/local")
     public String localRollback(@RequestParam(name = "number") Integer number) {
         try {
-            springPojoTransactionService.processFailureWithLocal(number);
-        } catch (final ShardingException ignore) {
+            performanceService.processFailureWithLocal(number);
+        } catch (final RuntimeException ignore) {
         }
         return "ok";
     }
     
     @RequestMapping(value = "/commit/xa")
     public String xaCommit(@RequestParam(name = "number") Integer number) {
-        springPojoTransactionService.processSuccessWithXA(number);
+        performanceService.processSuccessWithXA(number);
         return "ok";
     }
     
     @RequestMapping(value = "/rollback/xa")
     public String xaRollback(@RequestParam(name = "number") Integer number) {
         try {
-            springPojoTransactionService.processFailureWithXA(number);
-        } catch (final ShardingException ignore) {
+            performanceService.processFailureWithXA(number);
+        } catch (final RuntimeException ignore) {
         }
         return "ok";
     }
     
     @RequestMapping(value = "/commit/base")
     public String baseCommit(@RequestParam(name = "number") Integer number) {
-        springPojoTransactionService.processSuccessWithBase(number);
+        performanceService.processSuccessWithBase(number);
         return "ok";
     }
     
     @RequestMapping(value = "/rollback/base")
     public String baseRollback(@RequestParam(name = "number") Integer number) {
         try {
-            springPojoTransactionService.processFailureWithBase(number);
+            performanceService.processFailureWithBase(number);
         } catch (final RuntimeException ignore) {
         }
         return "ok";
