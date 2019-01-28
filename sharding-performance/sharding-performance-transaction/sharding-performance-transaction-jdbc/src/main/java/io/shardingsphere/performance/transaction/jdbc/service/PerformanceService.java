@@ -142,6 +142,6 @@ public class PerformanceService {
     }
     
     private void printTransactionType() {
-        System.out.println(String.format("-------------- Process With Transaction %s ---------------", TransactionTypeHolder.get()));
+//        System.out.println(String.format("-------------- Process With Transaction %s ---------------", TransactionTypeHolder.get()));
     }
 }
