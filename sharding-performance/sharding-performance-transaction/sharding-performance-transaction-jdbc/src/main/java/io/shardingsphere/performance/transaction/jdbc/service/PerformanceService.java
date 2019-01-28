@@ -41,6 +41,7 @@ public class PerformanceService {
     private List<Long> initOrderIds = new ArrayList<>();
     
     public void initEnvironment() {
+        initOrderIds.clear();
         orderRepo.createTableIfNotExists();
         orderRepo.truncateTable();
     }
