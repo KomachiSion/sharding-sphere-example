@@ -52,7 +52,8 @@ public class PerformanceService {
             initOrderIds.add(order.getOrderId());
         }
         if (initOrderIds.size() < dataRows) {
-            for (int i = 1; i <= dataRows - initOrderIds.size(); i++) {
+            int restRowNumber = dataRows - initOrderIds.size();
+            for (int i = 1; i <= restRowNumber; i++) {
                 Order order = new Order();
                 order.setUserId(i);
                 order.setStatus("INIT");
