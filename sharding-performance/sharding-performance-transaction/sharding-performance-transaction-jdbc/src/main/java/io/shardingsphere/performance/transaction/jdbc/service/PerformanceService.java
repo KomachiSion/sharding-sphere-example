@@ -77,7 +77,8 @@ public class PerformanceService {
         for (int i = 0; i < repeatTimes; i++) {
             randomUpdate(random);
         }
-        insertTooLongData();
+//        insertTooLongData();
+        throw new RuntimeException("test exception");
     }
     
     private void insertTooLongData() {
