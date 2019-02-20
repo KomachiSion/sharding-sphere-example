@@ -13,6 +13,7 @@
     
     <modules>
         <module>sharding-performance-transaction</module>
+        <module>snapshot-performance</module>
     </modules>
 
 </project>
