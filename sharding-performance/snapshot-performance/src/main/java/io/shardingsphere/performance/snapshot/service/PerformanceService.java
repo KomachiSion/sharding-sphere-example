@@ -79,6 +79,7 @@ public class PerformanceService {
     @SneakyThrows
     private Snapshot doInsert(String transactionId) {
         Snapshot snapshot = new Snapshot(transactionId);
+        log.info("txId {} start to get insert connection");
         long start = System.currentTimeMillis();
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
