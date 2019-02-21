@@ -25,7 +25,7 @@ JAVA_OPTS=" -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true "
 JAVA_MEM_OPTS=" -server -Xmx4g -Xms4g -Xmn2g -Xss256k -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods
 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 "
 
-MAIN_CLASS=io.shardingsphere.performance.transaction.io.shardingsphere.performance.snapshot.SpringBootPerformanceStarter
+MAIN_CLASS=io.shardingsphere.performance.snapshot.SpringBootPerformanceStarter
 
 echo "Starting the $SERVER_NAME ..."
 
