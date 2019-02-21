@@ -84,7 +84,8 @@ public class PerformanceService {
             statement.setObject(4, snapshot.getTransactionContext());
             statement.setObject(5, snapshot.getRevertContext());
             long executeStart = System.currentTimeMillis();
-            statement.executeUpdate();
+//            statement.executeUpdate();
+            Thread.sleep(10000);
             log.info("txId {} execute insert cost time {}", transactionId, System.currentTimeMillis() - executeStart);
         }
         return snapshot;
@@ -99,7 +100,9 @@ public class PerformanceService {
                 statement.addBatch();
             }
             long executeStart = System.currentTimeMillis();
-            statement.executeBatch();
+//            statement.executeBatch();
+            Thread.sleep(10000);
+            statement.clearBatch();
             log.info("txId {} execute delete cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - executeStart);
         }
     }
