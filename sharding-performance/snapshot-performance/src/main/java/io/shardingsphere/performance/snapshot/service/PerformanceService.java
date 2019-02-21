@@ -79,20 +79,21 @@ public class PerformanceService {
     @SneakyThrows
     private Snapshot doInsert(String transactionId) {
         Snapshot snapshot = new Snapshot(transactionId);
-        log.info("txId {} start to get insert connection");
+        log.info("txId {} start to get insert connection", transactionId);
         long start = System.currentTimeMillis();
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
             log.info("txId {} get insert connection cost time {}", transactionId, System.currentTimeMillis() - start);
-            start = System.currentTimeMillis();
             statement.setObject(1, snapshot.getUniformId());
             statement.setObject(2, snapshot.getTransactionId());
             statement.setObject(3, snapshot.getSnapshotId());
             statement.setObject(4, snapshot.getTransactionContext());
             statement.setObject(5, snapshot.getRevertContext());
+            long executeStart = System.currentTimeMillis();
             statement.executeUpdate();
-            log.info("txId {} execute insert cost time {}", transactionId, System.currentTimeMillis() - start);
+            log.info("txId {} execute insert cost time {}", transactionId, System.currentTimeMillis() - executeStart);
         }
+        log.info("txId {} execute insert whole cost time {}", transactionId, System.currentTimeMillis() - start);
         return snapshot;
     }
     
@@ -102,14 +103,15 @@ public class PerformanceService {
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
             log.info("txId {} get delete connection cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - start);
-            start = System.currentTimeMillis();
             for (Snapshot snapshot : snapshots) {
                 statement.setObject(1, snapshot.getUniformId());
                 statement.addBatch();
             }
+            long executeStart = System.currentTimeMillis();
             statement.executeBatch();
-            log.info("txId {} execute delete cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - start);
+            log.info("txId {} execute delete cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - executeStart);
         }
+        log.info("txId {} execute delete whole cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - start);
     }
     
     @RequiredArgsConstructor
