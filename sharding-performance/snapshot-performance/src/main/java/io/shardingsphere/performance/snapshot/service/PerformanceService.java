@@ -19,7 +19,6 @@ package io.shardingsphere.performance.snapshot.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -68,22 +67,17 @@ public class PerformanceService {
     @SneakyThrows
     public void business() {
         String transactionId = UUID.randomUUID().toString();
-//        long start = System.currentTimeMillis();
         Future<Object> future = executorService.submit(new TestInsert(transactionId));
         Snapshot snapshot1 = doInsert(transactionId);
         Snapshot snapshot2 = (Snapshot) future.get();
         doDelete(Lists.newArrayList(snapshot1, snapshot2));
-//        log.info("txId {} whole tx cost time {}", transactionId, System.currentTimeMillis() - start);
     }
     
     @SneakyThrows
     private Snapshot doInsert(String transactionId) {
         Snapshot snapshot = new Snapshot(transactionId);
-//        log.info("txId {} start to get insert connection", transactionId);
-        long start = System.currentTimeMillis();
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
-            log.info("txId {} get insert connection cost time {}", transactionId, System.currentTimeMillis() - start);
             statement.setObject(1, snapshot.getUniformId());
             statement.setObject(2, snapshot.getTransactionId());
             statement.setObject(3, snapshot.getSnapshotId());
@@ -93,16 +87,13 @@ public class PerformanceService {
             statement.executeUpdate();
             log.info("txId {} execute insert cost time {}", transactionId, System.currentTimeMillis() - executeStart);
         }
-//        log.info("txId {} execute insert whole cost time {}", transactionId, System.currentTimeMillis() - start);
         return snapshot;
     }
     
     @SneakyThrows
     private void doDelete(List<Snapshot> snapshots) {
-        long start = System.currentTimeMillis();
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
-            log.info("txId {} get delete connection cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - start);
             for (Snapshot snapshot : snapshots) {
                 statement.setObject(1, snapshot.getUniformId());
                 statement.addBatch();
@@ -111,7 +102,6 @@ public class PerformanceService {
             statement.executeBatch();
             log.info("txId {} execute delete cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - executeStart);
         }
-//        log.info("txId {} execute delete whole cost time {}", snapshots.get(0).getTransactionId(), System.currentTimeMillis() - start);
     }
     
     @RequiredArgsConstructor
