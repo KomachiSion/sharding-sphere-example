@@ -19,6 +19,7 @@ package io.shardingsphere.performance.snapshot.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.Collection;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -32,6 +33,7 @@ import javax.sql.DataSource;
 
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import lombok.Getter;
@@ -46,9 +48,9 @@ import lombok.SneakyThrows;
 @Service
 public class PerformanceService {
     
-    private static final String INSERT_SQL = "INSERT INTO saga_snapshot (transaction_id, snapshot_id, transaction_context, revert_context) values (?, ?, ?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO saga_snapshot2 (id, transaction_id, snapshot_id, transaction_context, revert_context) values (?, ?, ?, ?, ?)";
     
-    private static final String DELETE_SQL = "DELETE FROM saga_snapshot WHERE transaction_id = ?";
+    private static final String DELETE_SQL = "DELETE FROM saga_snapshot2 WHERE id = ?";
     
     @Resource
     private DataSource dataSource;
@@ -64,30 +66,35 @@ public class PerformanceService {
     public void business() {
         String transactionId = UUID.randomUUID().toString();
         Future<Object> future = executorService.submit(new TestInsert(transactionId));
-        doInsert(transactionId);
-        future.get();
-        doDelete(transactionId);
+        Snapshot snapshot1 = doInsert(transactionId);
+        Snapshot snapshot2 = (Snapshot) future.get();
+        doDelete(Lists.newArrayList(snapshot1, snapshot2));
     }
     
     @SneakyThrows
-    private void doInsert(String transactionId) {
+    private Snapshot doInsert(String transactionId) {
         Snapshot snapshot = new Snapshot(transactionId);
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
-            statement.setObject(1, snapshot.getTransactionId());
-            statement.setObject(2, snapshot.getSnapshotId());
-            statement.setObject(3, snapshot.getTransactionContext());
-            statement.setObject(4, snapshot.getRevertContext());
+            statement.setObject(1, snapshot.getUniformId());
+            statement.setObject(2, snapshot.getTransactionId());
+            statement.setObject(3, snapshot.getSnapshotId());
+            statement.setObject(4, snapshot.getTransactionContext());
+            statement.setObject(5, snapshot.getRevertContext());
             statement.executeUpdate();
         }
+        return snapshot;
     }
     
     @SneakyThrows
-    private void doDelete(String transactionId) {
+    private void doDelete(Collection<Snapshot> snapshots) {
         try (Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
-            statement.setObject(1, transactionId);
-            statement.executeUpdate();
+            for (Snapshot snapshot : snapshots) {
+                statement.setObject(1, snapshot.getUniformId());
+                statement.addBatch();
+            }
+            statement.executeBatch();
         }
     }
     
@@ -101,6 +108,10 @@ public class PerformanceService {
         private String revertContext = "SQLRevertResult(sql=UPDATE xxx SET xxx=? WHERE id=?, parameterSets=[[xxx, 1111111]])";
         
         private String transactionContext = "SagaBranchTransaction(dataSourceName=ds_1, sql=UPDATE xxx set xxx=? WHERE id=?, parameterSets=[[xxx, 1111111]])";
+        
+        public String getUniformId() {
+            return transactionId + snapshotId;
+        }
     }
     
     @RequiredArgsConstructor
@@ -110,8 +121,7 @@ public class PerformanceService {
     
         @Override
         public Object call() throws Exception {
-            doInsert(transactionId);
-            return "ok";
+            return doInsert(transactionId);
         }
     }
 }
