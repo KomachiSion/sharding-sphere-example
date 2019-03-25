@@ -26,7 +26,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan({"io.shardingsphere.example"})
 @EntityScan(basePackages = "io.shardingsphere.example.common.jpa.entity")
-@SpringBootApplication(exclude = JtaAutoConfiguration.class)
+@SpringBootApplication()
 public class SpringBootExample {
     
     public static void main(final String[] args) {
